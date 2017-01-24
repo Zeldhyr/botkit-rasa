@@ -15,25 +15,31 @@ module.exports = function(config) {
         receive: function(bot, message, next) {
 
             debug('Sending message to rasa API', message.text);
-            request.post(config.rasa_uri + '/parse',{form: {q: message.text }}, function(err, res, body) {
-                if (err) {
-                    console.error('rasa middleware error:',err);
-                } else {
-                    var json = null;
-                    try {
-                        json = JSON.parse(body);
-                    } catch(err) {
-                        console.error('rasa middleware error parsing json:',err);
-                    }
+            request({
+                            url: config.rasa_uri + '/parse',
+                            method: "POST",
+                            json: true,
+                            body: {q: message.text }
+                        }, function(err, res, body) {
+                if (typeof(message.text) != "undefined") {
+                    if (err) {
+                        console.error('rasa middleware error:',err);
+                    } else {
+                        var json = null;
+                        try {
+                                json = JSON.stringify(body);
+                                json = JSON.parse(json);
+                        } catch(err) {
+                            console.error('rasa middleware error parsing json:',err);
+                        }
 
-                    // copy the entire payload into the message
-                    if (json) {
-                        debug('rasa API payload', json);
-                        message.intent = json.intent;
-                        message.entities = json.entities;
+                        // copy the entire payload into the message
+                        if (json) {
+                            message.intent = json.intent;
+                            message.entities = json.entities;
+                        }
                     }
                 }
-
                 next();
 
             });
