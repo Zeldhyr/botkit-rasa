@@ -37,6 +37,7 @@ module.exports = function(config) {
                         if (json) {
                             message.intent = json.intent;
                             message.entities = json.entities;
+                            message.confidence = json.confidence;
                         }
                     }
                 }
