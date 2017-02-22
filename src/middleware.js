@@ -42,14 +42,9 @@ module.exports = function(config) {
                         }
                     }
                 }
-                next();
             });
+            return true;
         }
-
     }
-
-
     return middleware;
-
-
 }
