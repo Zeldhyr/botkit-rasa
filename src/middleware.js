@@ -13,8 +13,9 @@ module.exports = function(config) {
 
     var middleware = {
         receive: function(bot, message, next) {
-
-            debug('Sending message to rasa API', message.text);
+            next();
+        },
+        hears: function(patterns, message) {
             request({
                             url: config.rasa_uri + '/parse',
                             method: "POST",
@@ -42,17 +43,7 @@ module.exports = function(config) {
                     }
                 }
                 next();
-
             });
-
-        },
-        hears: function(patterns, message) {
-             for (var t = 0; t < patterns.length; t++) {
-               if (message.intent == patterns[t]){
-                   debug('rasa intent matched hear pattern', message.intent, patterns[t]);
-                   return true;
-               }
-             }
         }
 
     }
